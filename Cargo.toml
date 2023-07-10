@@ -1,0 +1,11 @@
+[package]
+name = "gpt_cli"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+request = "0.0.8"
+serde = "1.0.171"
+tokio = "1.29.1"
