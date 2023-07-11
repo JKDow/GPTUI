@@ -71,7 +71,7 @@ pub struct OaiPayload {
 }
 
 impl OaiPayload {
-    pub fn new(model: Model, messages: Vec<OaiMsg>, max_tokens: u32) -> Self {
+    pub fn new(model: &Model, messages: Vec<OaiMsg>, max_tokens: u32) -> Self {
         Self {
             model: model.to_string(),
             messages,
@@ -93,17 +93,17 @@ impl OaiPayload {
 /// ## Notes
 /// - For the role field, see Role enum
 /// - Currently only user and assistant are implemented
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct OaiMsg {
     pub role: String,
     pub content: String
 }
 
 impl OaiMsg {
-    pub fn new(role: Role, content: &str) -> Self {
+    pub fn new(role: Role, content: String) -> Self {
         Self {
             role: role.to_string(),
-            content: content.to_string()
+            content
         }
     }
 }

@@ -10,8 +10,8 @@ use crate::open_ai::objects::{
 
 pub async fn send_msg() {
 
-    let mut payload = OaiPayload::new(Model::Gpt3Turbo, vec![], 100);
-    let msg = OaiMsg::new(Role::User, "Hello, how are you?");
+    let mut payload = OaiPayload::new(&Model::Gpt3Turbo, vec![], 100);
+    let msg = OaiMsg::new(Role::User, "Hello, how are you?".to_string());
     payload.add_message(msg);
 
     let response = request::send_request(payload).await.unwrap();
