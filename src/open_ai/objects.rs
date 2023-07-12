@@ -63,19 +63,21 @@ impl Display for Role {
 /// ## Token Math
 /// - 1 token is 4 characters 
 /// - 4 characters is aproximately 3/4 of a word
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct OaiPayload {
     pub model: String,
     pub messages: Vec<OaiMsg>,
     pub max_tokens: u32,
+    pub stream: bool
 }
 
 impl OaiPayload {
-    pub fn new(model: &Model, messages: Vec<OaiMsg>, max_tokens: u32) -> Self {
+    pub fn new(model: &Model, messages: Vec<OaiMsg>, max_tokens: u32, stream: bool) -> Self {
         Self {
             model: model.to_string(),
             messages,
             max_tokens,
+            stream,
         }
     }
 
@@ -139,7 +141,7 @@ pub struct OaiResponse {
 #[derive(Deserialize, Debug)]
 pub struct OaiChoices {
     pub index: u32,
-    pub message: OaiMsg,
+    pub message: Option<OaiMsg>,
     pub finish_reason: String,
 }
 

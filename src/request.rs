@@ -12,15 +12,16 @@ pub async fn send_request(payload: OaiPayload) -> Result<OaiResponse, Box<dyn st
     headers.insert("Authorization", format!("Bearer {}", api_key).parse().unwrap());
 
     let client = Client::new();
-
+    println!("Sending request: {:#?}", payload);
     let response = client
         .post(uri)
         .headers(headers)
         .json(&payload)
         .send()
-        .await?
-        .json::<OaiResponse>()
         .await?;
+
+    println!("Response: {:#?}", response);
+    let response = response.json::<OaiResponse>().await?;
 
     Ok(response)
 }

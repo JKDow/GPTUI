@@ -7,24 +7,26 @@ use super::objects::{OaiMsg, Model, OaiPayload, Role};
 pub struct Chat {
     messages: Vec<OaiMsg>,
     model: Model,
+    stream: bool
 }
 
 impl Chat {
-    pub fn new(model: Model) -> Self {
+    pub fn new(model: Model, stream: bool) -> Self {
         Self {
             messages: Vec::new(),
             model,
+            stream
         }
     }
 
     pub async fn send_msg(&mut self, msg: String) -> Result<&OaiMsg,()> {
-        let mut payload = OaiPayload::new(&self.model, self.messages.clone(), 1000);
+        let mut payload = OaiPayload::new(&self.model, self.messages.clone(), 1000, self.stream);
         let msg = OaiMsg::new(Role::User, msg);
         payload.add_message(msg.clone());
         self.messages.push(msg);
         let mut response = request::send_request(payload).await.unwrap();
         let choice = response.choices.pop().unwrap();
-        self.messages.push(choice.message);
+        self.messages.push(choice.message.unwrap());
         Ok(self.messages.last().unwrap())
     }
 
