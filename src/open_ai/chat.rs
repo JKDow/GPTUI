@@ -1,7 +1,5 @@
 use std::io::{stdin, BufRead};
-
-use crate::request;
-use super::objects::{OaiMsg, Model, OaiPayload, Role};
+use super::{request, objects::{OaiMsg, Model, OaiPayload, Role}};
 
 
 pub struct Chat {
@@ -24,9 +22,17 @@ impl Chat {
         let msg = OaiMsg::new(Role::User, msg);
         payload.add_message(msg.clone());
         self.messages.push(msg);
-        let mut response = request::send_request(payload).await.unwrap();
-        let choice = response.choices.pop().unwrap();
-        self.messages.push(choice.message.unwrap());
+
+        let msg = match self.stream {
+            true => request::stream_request(payload).await.unwrap(),
+            false => {
+                let mut response = request::send_request(payload).await.unwrap();
+                let choice = response.choices.pop().unwrap();
+                choice.message.unwrap()
+            }
+        };
+
+        self.messages.push(msg.clone());
         Ok(self.messages.last().unwrap())
     }
 
@@ -39,9 +45,11 @@ impl Chat {
             if msg == "exit" {
                 break;
             }
-            let response = self.send_msg(msg).await.unwrap();
             println!("Response:");
-            println!("{}", response.content);
+            let response = self.send_msg(msg).await.unwrap().content.clone();
+            if !self.stream {
+                println!("{}", response);
+            }
             buf.clear();
         }
     }

@@ -128,6 +128,7 @@ pub struct OaiResponse {
     pub created: Option<u64>,
     pub choices: Vec<OaiChoices>,
     pub usage: OaiUsage,
+    pub model: Option<String>,
 }
 
 /// ## Overview
@@ -151,3 +152,4 @@ pub struct OaiUsage {
     pub completion_tokens: u32,
     pub total_tokens: u32,
 }
+
