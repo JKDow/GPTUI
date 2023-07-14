@@ -110,6 +110,12 @@ impl OaiMsg {
     }
 }
 
+impl Display for OaiMsg {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[{}] {}", self.role, self.content)
+    }
+}
+
 /// ## Overview
 /// The response from the chat
 /// ## Fields

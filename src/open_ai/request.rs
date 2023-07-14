@@ -71,5 +71,5 @@ pub async fn stream_request(payload: OaiPayload) -> Result<OaiMsg, Box<dyn std::
         }
     }
     println!("");
-    Ok(OaiMsg::new(Role::User, msg_buf))
+    Ok(OaiMsg::new(Role::Assistant, msg_buf))
 }
