@@ -20,7 +20,7 @@ pub enum SubCommand {
 
 #[derive(Parser, Debug)]
 pub struct StartCmd {
-    pub model: String
+    pub model: Option<String>
 }
 
 #[derive(Parser, Debug)]

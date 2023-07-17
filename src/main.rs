@@ -1,5 +1,5 @@
 use clap::Parser;
-use gpt_ui::{cli::input::GptUi, config::Config};
+use gpt_ui::{cli::input::GptUi, config::Config, open_ai::{objects::Model, chat::Chat}};
 
 #[tokio::main]
 async fn main() {
@@ -7,13 +7,16 @@ async fn main() {
     println!("Welcome to gpt CLI");
     // get config
     let config: Config = gpt_ui::config::Config::new().unwrap();
-    // set env variable with api key
-    std::env::set_var("OPENAI_API_KEY", config.gptui.api_key);
-    /*
+    // Read args 
     let args = GptUi::parse();
     match args.subcmd {
         gpt_ui::cli::input::SubCommand::Start(start) => {
-            println!("Starting with model: {}", start.model);
+            let model = match start.model {
+                Some(model) => Model::from_str(&model).unwrap(),
+                None => config.gptui.default_model
+            };
+            let mut chat = Chat::new(model, config.gptui.stream);
+            chat.basic_loop().await;
         },
         gpt_ui::cli::input::SubCommand::Save(save) => {
             println!("Saving to path: {:?}", save.path);
@@ -22,5 +25,4 @@ async fn main() {
             println!("Loading from path: {:?}", load.path);
         },
     }
-    */
 }

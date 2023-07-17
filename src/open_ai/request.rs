@@ -5,17 +5,8 @@ use std::env;
 use std::io::{Write, stdout};
 use futures_util::StreamExt;
 
-fn get_key() -> String{
-    let key = env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY must be set");
-    // check key is not 0 length
-    if key.is_empty() {
-        panic!("OPENAI_API_KEY must be set");
-    }
-    key
-}
-
 pub async fn send_request(payload: OaiPayload) -> Result<OaiResponse, Box<dyn std::error::Error>> {
-    let api_key = get_key();
+    let api_key = env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY not set");
     let uri = "https://api.openai.com/v1/chat/completions";
 
     let mut headers = HeaderMap::new();
@@ -38,7 +29,7 @@ pub async fn send_request(payload: OaiPayload) -> Result<OaiResponse, Box<dyn st
 }
 
 pub async fn stream_request(payload: OaiPayload) -> Result<OaiMsg, Box<dyn std::error::Error>> {
-    let api_key = get_key();
+    let api_key = env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY not set");
     let uri = "https://api.openai.com/v1/chat/completions";
 
     let mut headers = HeaderMap::new();

@@ -20,4 +20,5 @@ Cargo.lock
 
 .env
 /chats
+/chat_logs
 config.toml

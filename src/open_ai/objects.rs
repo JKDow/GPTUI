@@ -8,12 +8,24 @@ use serde::{Serialize, Deserialize};
 /// - **Gpt4_32k:** GPT-4 with a 32k token vocab
 /// - **Gpt3Turbo:** GPT-3.5 Turbo 
 /// - **Gpt3Turbo16k:** GPT-3.5 Turbo with a 16k token vocab
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum Model {
     Gpt4,
     Gpt4_32k,
     Gpt3Turbo,
     Gpt3Turbo16k
+}
+
+impl Model {
+    pub fn from_str(model: &str) -> Result<Self, ()> {
+        match model {
+            "gpt-4" | "Gpt4" => Ok(Model::Gpt4),
+            "gpt-4-32k" | "Gpt4_32k" => Ok(Model::Gpt4_32k),
+            "gpt-3.5-turbo" | "Gpt3Turbo"=> Ok(Model::Gpt3Turbo),
+            "gpt-3.5-turbo-16k" | "Gpt3Turbo16k"=> Ok(Model::Gpt3Turbo16k),
+            _ => return Err(())
+        }
+    }
 }
 
 impl Display for Model {

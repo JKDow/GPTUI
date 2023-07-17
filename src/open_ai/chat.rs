@@ -6,7 +6,8 @@ use super::{request, objects::{OaiMsg, Model, OaiPayload, Role}};
 pub struct Chat {
     pub messages: Vec<OaiMsg>,
     pub model: Model,
-    pub stream: bool
+    pub stream: bool,
+    pub creation: String
 }
 
 impl Chat {
@@ -14,7 +15,8 @@ impl Chat {
         Self {
             messages: Vec::new(),
             model,
-            stream
+            stream,
+            creation: chrono::Local::now().format("%Y-%m-%d_%H-%M-%S").to_string()
         }
     }
 
@@ -53,15 +55,13 @@ impl Chat {
         let mut buf = String::new();
         loop {
             buf.clear();
+            self.save_json().unwrap();
             println!("Enter Msg:");
             stdin().lock().read_line(&mut buf).unwrap();
             let msg = buf.trim().to_string();
             if msg == "exit" {
                 break;
-            } else if msg == "save" {
-                self.save_json().unwrap();
-                continue;
-            }
+            } 
             println!("Response:");
             let response = self.send_msg(msg).await.unwrap().content.clone();
             if !self.stream {
@@ -77,9 +77,9 @@ impl Chat {
     /// 
     /// Example name: gpt3_turbo_2021-08-01_12-00-00.json
     pub fn save_json(&self) -> Result<(),()> {
-        let time = chrono::Local::now().format("%Y-%m-%d_%H-%M-%S").to_string();
-        let name = format!("{}_{}.json", self.model.to_string(), time);
-        let mut path = PathBuf::from("./chats");
+        let name = format!("{}_{}.json", self.model.to_string(), self.creation);
+        let path = std::env::var("CHAT_LOG_PATH").unwrap();
+        let mut path = PathBuf::from(path);
         create_dir_all(&path).unwrap();
         path.push(name);
         let json = serde_json::to_string_pretty(&self).unwrap();
