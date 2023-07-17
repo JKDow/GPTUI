@@ -1,4 +1,4 @@
-use gpt_cli::open_ai::{chat::Chat, objects::Model};
+use gpt_tui::open_ai::{chat::Chat, objects::Model};
 
 #[tokio::main]
 async fn main() {

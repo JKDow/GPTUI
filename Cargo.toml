@@ -1,5 +1,5 @@
 [package]
-name = "gpt_cli"
+name = "gpt_tui"
 version = "0.1.0"
 edition = "2021"
 
