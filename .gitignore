@@ -19,5 +19,5 @@ Cargo.lock
 /target
 
 .env
-
 /chats
+config.toml

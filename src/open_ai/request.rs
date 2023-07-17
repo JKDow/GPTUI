@@ -1,14 +1,17 @@
 use crate::open_ai::objects::{OaiPayload, OaiResponse, OaiMsg, Role};
 use crate::open_ai::stream_types::OaiStreamResponse;
-use dotenv::dotenv;
 use reqwest::{header::{HeaderMap, CONTENT_TYPE}, Client};
 use std::env;
 use std::io::{Write, stdout};
 use futures_util::StreamExt;
 
 fn get_key() -> String{
-    dotenv().ok(); 
-    env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY must be set")
+    let key = env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY must be set");
+    // check key is not 0 length
+    if key.is_empty() {
+        panic!("OPENAI_API_KEY must be set");
+    }
+    key
 }
 
 pub async fn send_request(payload: OaiPayload) -> Result<OaiResponse, Box<dyn std::error::Error>> {
