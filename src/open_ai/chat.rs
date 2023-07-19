@@ -7,16 +7,20 @@ pub struct Chat {
     pub messages: Vec<OaiMsg>,
     pub model: Model,
     pub stream: bool,
-    pub creation: String
+    pub creation: String,
+    api_key: String,
+    cache_path: PathBuf
 }
 
 impl Chat {
-    pub fn new(model: Model, stream: bool) -> Self {
+    pub fn new(model: Model, stream: bool, api_key: String, cache_path: PathBuf) -> Self {
         Self {
             messages: Vec::new(),
             model,
             stream,
-            creation: chrono::Local::now().format("%Y-%m-%d_%H-%M-%S").to_string()
+            creation: chrono::Local::now().format("%Y-%m-%d_%H-%M-%S").to_string(),
+            api_key,
+            cache_path
         }
     }
 

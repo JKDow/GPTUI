@@ -20,9 +20,6 @@ impl Config {
             Ok(content) => toml::from_str(&content).expect("Failed to parse config file"), // Add update config function 
             Err(_) => Config::create_config(path).unwrap()
         };
-        // set env variable 
-        std::env::set_var("OPENAI_API_KEY", &config.gptui.api_key);
-        std::env::set_var("CHAT_LOG_PATH", &config.gptui.chat_log_directory);
         Ok(config)
     }
 

@@ -1,25 +1,12 @@
 use clap::Parser;
-use gpt_ui::{
-    cli::{
-        input::{GptUi, SubCommand}, 
-        command_functions::{
-            save_chat, 
-            clear_chat_logs
-        }
-    }, 
-    config::Config, 
-    open_ai::{
-        objects::Model, 
-        chat::Chat
-    }
-};
+use gptui::prelude::*;
 
 #[tokio::main]
 async fn main() {
     // get message from user 
     println!("Welcome to gpt CLI");
     // get config
-    let config: Config = gpt_ui::config::Config::new().unwrap();
+    let config: Config = gptui::config::Config::new().unwrap();
     // Read args 
     let args = GptUi::parse();
     match args.subcmd {
@@ -28,7 +15,7 @@ async fn main() {
                 Some(model) => Model::from_str(&model).unwrap(),
                 None => config.gptui.default_model
             };
-            let mut chat = Chat::new(model, config.gptui.stream);
+            let mut chat = Chat::new(model, config.gptui.stream, config.gptui.api_key, config.gptui.chat_log_directory);
             chat.basic_loop().await;
         },
         SubCommand::Save(save) => {
