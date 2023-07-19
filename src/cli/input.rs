@@ -16,6 +16,8 @@ pub enum SubCommand {
     Start(StartCmd),
     Save(SaveCmd),
     Load(LoadCmd),
+    Clear,
+    Continue(ContinueCmd)
 }
 
 #[derive(Parser, Debug)]
@@ -30,6 +32,11 @@ pub struct SaveCmd {
 
 #[derive(Parser, Debug)]
 pub struct LoadCmd {
+    pub path: PathBuf
+}
+
+#[derive(Parser, Debug)]
+pub struct ContinueCmd {
     pub path: PathBuf
 }
 

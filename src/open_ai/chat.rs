@@ -91,9 +91,7 @@ impl Chat {
 
     /// ## Overview
     /// Loads a chat object from a json file under ./chats/
-    pub fn load_json(file_name: &str) -> Result<Self,()> {
-        let mut path = PathBuf::from("./chats");
-        path.push(file_name);
+    pub fn load_json(path: PathBuf) -> Result<Self,()> {
         let file = File::open(path).unwrap();
         let chat: Self = serde_json::from_reader(file).unwrap();
         Ok(chat)

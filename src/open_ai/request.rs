@@ -64,6 +64,11 @@ pub async fn stream_request(payload: OaiPayload) -> Result<OaiMsg, Box<dyn std::
             }
         }
     }
-    println!("");
+    if msg_buf.is_empty() {
+        msg_buf.push_str("Error Connecting to OpenAI API");
+        println!("{}", &msg_buf);
+    } else {
+        println!("");
+    }
     Ok(OaiMsg::new(Role::Assistant, msg_buf))
 }
