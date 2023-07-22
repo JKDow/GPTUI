@@ -1,4 +1,5 @@
 use std::fmt::Display;
+use clap::ValueEnum;
 use serde::{Serialize, Deserialize};
 
 /// ## Overview
@@ -8,7 +9,7 @@ use serde::{Serialize, Deserialize};
 /// - **Gpt4_32k:** GPT-4 with a 32k token vocab
 /// - **Gpt3Turbo:** GPT-3.5 Turbo 
 /// - **Gpt3Turbo16k:** GPT-3.5 Turbo with a 16k token vocab
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, ValueEnum)]
 pub enum Model {
     Gpt4,
     Gpt4_32k,

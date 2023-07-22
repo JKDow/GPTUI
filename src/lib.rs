@@ -1,6 +1,7 @@
 pub mod open_ai; 
 pub mod cli; 
 pub mod config; 
+pub mod paths; 
 
 
 pub mod prelude {
@@ -12,10 +13,10 @@ pub mod prelude {
                 clear_chat_logs
             }
         }, 
-        config::Config, 
+        config::MainConfig, 
         open_ai::{
             objects::Model, 
-            chat::Chat
+            chat::OaiChat
         }
     };
 }

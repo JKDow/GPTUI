@@ -1,10 +1,14 @@
 use std::{path::PathBuf, fs::DirEntry, time::SystemTime, io::{Read, Write}};
 
+use crate::paths::get_cache_root;
 
-pub fn save_chat(path: PathBuf, logs_dir: PathBuf) {
+
+pub fn save_chat(path: PathBuf) {
     //from chat logs directory read the last chat log
     let mut newest: Option<DirEntry> = None;
     let mut newest_time: Option<SystemTime> = None;
+    let mut logs_dir = get_cache_root();
+    logs_dir.push("chats");
     for entry in std::fs::read_dir(logs_dir).unwrap() {
         let entry = entry.unwrap();
         let data = entry.metadata().unwrap(); 
@@ -38,8 +42,10 @@ pub fn save_chat(path: PathBuf, logs_dir: PathBuf) {
 /// This will delete all files in the configured directory
 /// 
 /// Operation is **not** reversable 
-pub fn clear_chat_logs(path: PathBuf) -> u32 {
+pub fn clear_chat_logs() -> u32 {
     // Clear all chat logs at path 
+    let mut path = get_cache_root();
+    path.push("chats");
     let mut num = 0; 
     for entry in std::fs::read_dir(path).unwrap() {
         num += 1;

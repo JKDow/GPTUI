@@ -1,14 +1,12 @@
-use std::path::PathBuf;
-
 use serde::{Deserialize, Serialize};
 use crate::open_ai::objects::Model;
 
 #[derive(Debug, Deserialize, Default, Serialize)]
-pub struct Config {
+pub struct MainConfig {
     pub gptui: GptUiConfig
 }
 
-impl Config {
+impl MainConfig {
     /// Reads config file at path and returns Config struct
     /// 
     /// Also sets OPENAI_API_KEY env variable
@@ -18,14 +16,14 @@ impl Config {
         let path = std::path::Path::new("config.toml");
         let config = match std::fs::read_to_string(path) {
             Ok(content) => toml::from_str(&content).expect("Failed to parse config file"), // Add update config function 
-            Err(_) => Config::create_config(path).unwrap()
+            Err(_) => MainConfig::create_config(path).unwrap()
         };
         Ok(config)
     }
 
     fn create_config(path: &std::path::Path) -> Result<Self, ()> {
         // Create config file at path with default values
-        let config = Config::default();
+        let config = MainConfig::default();
         let content = toml::to_string(&config).expect("Failed to serialize config");
         // Write to file 
         match std::fs::write(path, content) {
@@ -40,7 +38,6 @@ pub struct GptUiConfig {
     pub api_key: String,
     pub default_model: Model,
     pub stream: bool,
-    pub chat_log_directory: PathBuf
 }
 
 impl Default for GptUiConfig {
@@ -49,7 +46,6 @@ impl Default for GptUiConfig {
             api_key: String::from(""),
             default_model: Model::Gpt3Turbo,
             stream: true,
-            chat_log_directory: PathBuf::from("~/.gptui/chat_logs")
         }
     }
 }

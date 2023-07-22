@@ -3,24 +3,28 @@ use serde::{Deserialize, Serialize};
 use super::{request, objects::{OaiMsg, Model, OaiPayload, Role}};
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Chat {
+pub struct OaiChat {
     pub messages: Vec<OaiMsg>,
     pub model: Model,
     pub stream: bool,
     pub creation: String,
     api_key: String,
-    cache_path: PathBuf
+    path: PathBuf, 
 }
 
-impl Chat {
-    pub fn new(model: Model, stream: bool, api_key: String, cache_path: PathBuf) -> Self {
+impl OaiChat {
+    pub fn new(model: Model, stream: bool, api_key: String, directory: PathBuf) -> Self {
+        let creation = chrono::Local::now().format("%Y-%m-%d_%H-%M-%S").to_string();
+        let mut path = directory;
+        let name = format!("{}_{}.json", model.to_string(), creation);
+        path.push(name);
         Self {
             messages: Vec::new(),
             model,
             stream,
-            creation: chrono::Local::now().format("%Y-%m-%d_%H-%M-%S").to_string(),
+            creation: creation,
             api_key,
-            cache_path
+            path
         }
     }
 
@@ -81,20 +85,19 @@ impl Chat {
     /// 
     /// Example name: gpt3_turbo_2021-08-01_12-00-00.json
     pub fn save_json(&self) -> Result<(),()> {
-        let name = format!("{}_{}.json", self.model.to_string(), self.creation);
-        let path = std::env::var("CHAT_LOG_PATH").unwrap();
-        let mut path = PathBuf::from(path);
-        create_dir_all(&path).unwrap();
-        path.push(name);
+        // remove file name from self.path and save in directory
+        let mut directory = self.path.clone();
+        directory.pop();
+        create_dir_all(&directory).unwrap();
         let json = serde_json::to_string_pretty(&self).unwrap();
         // write json to file to path
-        let mut file = File::create(path).unwrap();
+        let mut file = File::create(&self.path).unwrap();
         file.write_all(json.as_bytes()).unwrap();
         Ok(())
     }
 
     /// ## Overview
-    /// Loads a chat object from a json file under ./chats/
+    /// Loads a chat object from a json file 
     pub fn load_json(path: PathBuf) -> Result<Self,()> {
         let file = File::open(path).unwrap();
         let chat: Self = serde_json::from_reader(file).unwrap();
