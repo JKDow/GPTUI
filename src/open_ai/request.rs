@@ -1,12 +1,10 @@
 use crate::open_ai::objects::{OaiPayload, OaiResponse, OaiMsg, Role};
 use crate::open_ai::stream_types::OaiStreamResponse;
 use reqwest::{header::{HeaderMap, CONTENT_TYPE}, Client};
-use std::env;
 use std::io::{Write, stdout};
 use futures_util::StreamExt;
 
-pub async fn send_request(payload: OaiPayload) -> Result<OaiResponse, Box<dyn std::error::Error>> {
-    let api_key = env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY not set");
+pub async fn send_request(payload: OaiPayload, api_key: &String) -> Result<OaiResponse, Box<dyn std::error::Error>> {
     let uri = "https://api.openai.com/v1/chat/completions";
 
     let mut headers = HeaderMap::new();
@@ -28,8 +26,7 @@ pub async fn send_request(payload: OaiPayload) -> Result<OaiResponse, Box<dyn st
     Ok(response)
 }
 
-pub async fn stream_request(payload: OaiPayload) -> Result<OaiMsg, Box<dyn std::error::Error>> {
-    let api_key = env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY not set");
+pub async fn stream_request(payload: OaiPayload, api_key: &String) -> Result<OaiMsg, Box<dyn std::error::Error>> {
     let uri = "https://api.openai.com/v1/chat/completions";
 
     let mut headers = HeaderMap::new();

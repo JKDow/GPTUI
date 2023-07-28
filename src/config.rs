@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use crate::open_ai::objects::Model;
 
-#[derive(Debug, Deserialize, Default, Serialize)]
+#[derive(Debug, Deserialize, Default, Serialize, Clone)]
 pub struct MainConfig {
     pub gptui: GptUiConfig
 }
@@ -33,7 +33,7 @@ impl MainConfig {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct GptUiConfig {
     pub api_key: String,
     pub default_model: Model,

@@ -6,13 +6,10 @@ pub mod paths;
 
 pub mod prelude {
     pub use crate::{
-        cli::{
-            input::{GptUi, SubCommand}, 
-            command_functions::{
-                save_chat, 
-                clear_chat_logs
-            }
-        }, 
+        cli::input::{
+            gptui_cmd::GptUi, 
+            gptui_sub_cmd::all::*, 
+            chat_sub_cmd::all::*}, 
         config::MainConfig, 
         open_ai::{
             objects::Model, 

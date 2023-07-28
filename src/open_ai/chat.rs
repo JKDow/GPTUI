@@ -9,22 +9,34 @@ pub struct OaiChat {
     pub stream: bool,
     pub creation: String,
     api_key: String,
-    path: PathBuf, 
+    name: String,
+    directory: PathBuf, 
 }
 
 impl OaiChat {
     pub fn new(model: Model, stream: bool, api_key: String, directory: PathBuf) -> Self {
         let creation = chrono::Local::now().format("%Y-%m-%d_%H-%M-%S").to_string();
-        let mut path = directory;
         let name = format!("{}_{}.json", model.to_string(), creation);
-        path.push(name);
         Self {
             messages: Vec::new(),
             model,
             stream,
             creation: creation,
             api_key,
-            path
+            name,
+            directory
+        }
+    }
+
+    fn from_censored(chat: OaiChatCensored, api_key: String, path: PathBuf) -> Self {
+        Self {
+            messages: chat.messages,
+            model: chat.model,
+            stream: chat.stream,
+            creation: chat.creation,
+            api_key,
+            name: path.file_name().unwrap().to_str().unwrap().to_string(),
+            directory: path.parent().unwrap().to_path_buf(),
         }
     }
 
@@ -41,9 +53,9 @@ impl OaiChat {
         self.messages.push(msg);
 
         let msg = match self.stream {
-            true => request::stream_request(payload).await.unwrap(),
+            true => request::stream_request(payload, &self.api_key).await.unwrap(),
             false => {
-                let mut response = request::send_request(payload).await.unwrap();
+                let mut response = request::send_request(payload, &self.api_key).await.unwrap();
                 let choice = response.choices.pop().unwrap();
                 choice.message.unwrap()
             }
@@ -79,29 +91,29 @@ impl OaiChat {
     }
     
     /// ## Overview
-    /// Saves the curren chat object to a json file under ./chats/
+    /// Saves the curren chat object to a json file
     /// 
-    /// The file will be the name of the model and the current time
+    /// For cacheing the file will be the name of the model and the current time
     /// 
     /// Example name: gpt3_turbo_2021-08-01_12-00-00.json
     pub fn save_json(&self) -> Result<(),()> {
         // remove file name from self.path and save in directory
-        let mut directory = self.path.clone();
-        directory.pop();
-        create_dir_all(&directory).unwrap();
-        let json = serde_json::to_string_pretty(&self).unwrap();
+        create_dir_all(&self.directory).unwrap();
         // write json to file to path
-        let mut file = File::create(&self.path).unwrap();
+        let mut path = self.directory.clone();
+        path.push(&self.name);
+        let mut file = File::create(path).unwrap();
+        let json = serde_json::to_string_pretty::<OaiChatCensored>(&self.into()).unwrap();
         file.write_all(json.as_bytes()).unwrap();
         Ok(())
     }
 
     /// ## Overview
     /// Loads a chat object from a json file 
-    pub fn load_json(path: PathBuf) -> Result<Self,()> {
-        let file = File::open(path).unwrap();
-        let chat: Self = serde_json::from_reader(file).unwrap();
-        Ok(chat)
+    pub fn load_json(path: PathBuf, api_key: String) -> Result<Self,()> {
+        let file = File::open(&path).unwrap();
+        let chat: OaiChatCensored = serde_json::from_reader(file).unwrap();
+        Ok(Self::from_censored(chat, api_key, path))
     }
 
     /// ## Overview
@@ -109,6 +121,25 @@ impl OaiChat {
     pub fn print_messages(&self) {
         for msg in &self.messages {
             println!("{}", msg);
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct OaiChatCensored {
+    messages: Vec<OaiMsg>,
+    model: Model,
+    stream: bool,
+    creation: String,
+}
+
+impl From<&OaiChat> for OaiChatCensored {
+    fn from(chat: &OaiChat) -> Self {
+        Self {
+            messages: chat.messages.clone(),
+            model: chat.model.clone(),
+            stream: chat.stream.clone(),
+            creation: chat.creation.clone(),
         }
     }
 }

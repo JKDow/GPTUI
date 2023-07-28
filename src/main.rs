@@ -1,4 +1,7 @@
+use std::path::PathBuf;
+
 use clap::Parser;
+use gptui::cli::commands::chat_session::run_chat_session;
 use gptui::{prelude::*, paths::get_cache_root};
 use gptui::cli::input::SubCommand;
 
@@ -9,12 +12,4 @@ async fn main() {
     // Read args 
     let args = GptUi::parse();
     
-    match args.subcmd {
-        SubCommand::Msg(msg_info) => {}
-        SubCommand::Reply(reply_info) => {}
-        SubCommand::Chat(chat_info) => {}
-        SubCommand::Open(open_info) => {}
-        SubCommand::Config(config_info) => {}
-        SubCommand::History(history_info) => {}
-    }
 }

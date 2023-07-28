@@ -22,3 +22,5 @@ Cargo.lock
 /chats
 /chat_logs
 config.toml
+/files
+/.vscode

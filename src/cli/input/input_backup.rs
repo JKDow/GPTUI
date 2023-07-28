@@ -1,7 +1,5 @@
 use std::path::PathBuf;
-
 use clap::{Parser, Subcommand}; 
-
 use crate::open_ai::objects::Model;
 
 #[derive(Parser)]
@@ -17,7 +15,6 @@ pub struct GptUi {
 #[derive(Subcommand, Debug)]
 pub enum SubCommand {
     Msg(MsgCmd),
-    Reply(ReplyCmd),
     Chat(ChatCmd),
     Open(OpenCmd),
     Config(ConfigCmd),
@@ -33,6 +30,9 @@ pub struct MsgCmd {
     /// The model to use for the message
     #[arg(short, long, value_name = "MODEL")]
     pub model: Option<Model>, 
+    /// Continues the message chain rather than starting a new one
+    #[arg(short, long)]
+    pub reply: bool
 }
 
 /// Reply to a quick chat message (Retains context)
@@ -75,7 +75,7 @@ pub struct ChatSaveCmd {
     pub name: Option<String>,
     /// Path to save the chat to 
     #[arg(short, long, value_name = "PATH")]
-    pub path: Option<PathBuf>,
+    pub path: PathBuf,
 }
 
 /// Loads a chat from a chat file
