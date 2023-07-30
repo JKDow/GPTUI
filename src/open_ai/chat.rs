@@ -28,6 +28,20 @@ impl OaiChat {
         }
     }
 
+    pub fn new_temp(model: Model, stream: bool, api_key: String, directory: PathBuf) -> Self {
+        let creation = chrono::Local::now().format("%Y-%m-%d_%H-%M-%S").to_string();
+        let name = "temp.json".to_string();
+        Self {
+            messages: Vec::new(),
+            model,
+            stream,
+            creation: creation,
+            api_key,
+            name,
+            directory
+        }
+    }
+
     fn from_censored(chat: OaiChatCensored, api_key: String, path: PathBuf) -> Self {
         Self {
             messages: chat.messages,
